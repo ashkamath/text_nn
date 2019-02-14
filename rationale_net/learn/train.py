@@ -184,7 +184,8 @@ def run_epoch(data_loader, train_model, model, gen, optimizer, step, args):
 
         x_indx = learn.get_x_indx(batch, args, eval_model)
         text = batch['text']
-        y = autograd.Variable(batch['y'], volatile=eval_model)
+
+        y = autograd.Variable(batch['y'], requires_grad=eval_model)
 
         if args.cuda:
             x_indx, y = x_indx.cuda(), y.cuda()
@@ -203,7 +204,7 @@ def run_epoch(data_loader, train_model, model, gen, optimizer, step, args):
             logit = logit.view(-1, 2)
             y = y.view(-1)
 
-        loss = get_loss(logit, y, args)
+        loss = get_loss(logit, y.long(), args)
         obj_loss = loss
 
         if args.get_rationales:
